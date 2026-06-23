@@ -1,0 +1,11 @@
+nombre,apellido,email,telefono,ciudad,cargo
+Andrés,Cortés,andres.cortes@email.com,3101234567,Bogotá,Desarrollador
+María,López,maria.lopez@email.com,3209876543,Medellín,Diseñadora
+Carlos,García,carlos.garcia@email.com,3154567890,Cali,Gerente
+Laura,Martínez,laura.martinez@email.com,3001122334,Barranquilla,Analista
+Juan,Rodríguez,juan.rodriguez@email.com,3175678901,Bogotá,DevOps
+Sofía,Hernández,sofia.hernandez@email.com,3122233445,Medellín,QA Engineer
+Diego,Torres,diego.torres@email.com,3189901234,Cartagena,Scrum Master
+Valentina,Ramírez,valentina.ramirez@email.com,3043344556,Bogotá,Product Owner
+Felipe,Vargas,felipe.vargas@email.com,3161234567,Pereira,Arquitecto
+Camila,Morales,camila.morales@email.com,3218765432,Cali,Data Scientist

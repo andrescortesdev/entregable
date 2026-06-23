@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Firebase Excel Manager — Politécnico Grancolombiano</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --poli-navy:  #293357;
+            --poli-teal:  #00A3C7;
+            --poli-light: #E8F7FB;
+            --poli-gray:  #F4F5F8;
+        }
+        * { font-family: 'Nunito', sans-serif; }
+
+        body { background: var(--poli-gray); }
+
+        /* ── Navbar ── */
+        .navbar-poli {
+            background: var(--poli-navy);
+            box-shadow: 0 2px 12px rgba(41,51,87,.35);
+        }
+        .navbar-poli .logo-wrap img { height: 38px; }
+        .navbar-poli .divider { width: 1px; height: 32px; background: rgba(255,255,255,.3); }
+        .navbar-poli .app-title { color: #fff; font-weight: 700; font-size: 1rem; letter-spacing: .3px; }
+        .navbar-poli .app-sub   { color: var(--poli-teal); font-size: .72rem; font-weight: 600; }
+
+        /* ── Header hero ── */
+        .hero {
+            background: linear-gradient(135deg, var(--poli-navy) 0%, #1c2444 60%, #0d2a3c 100%);
+            color: #fff;
+            padding: 2.5rem 0 2rem;
+        }
+        .hero h1 { font-weight: 800; font-size: 1.6rem; }
+        .hero p  { color: rgba(255,255,255,.75); font-size: .9rem; }
+        .teal-badge {
+            display: inline-block;
+            background: var(--poli-teal);
+            color: #fff;
+            font-size: .7rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 20px;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+        }
+
+        /* ── Cards ── */
+        .card { border: none; border-radius: 14px; box-shadow: 0 2px 16px rgba(41,51,87,.09); }
+        .card-header-poli {
+            background: var(--poli-navy);
+            color: #fff;
+            border-radius: 14px 14px 0 0 !important;
+            padding: .85rem 1.25rem;
+            font-weight: 700;
+            font-size: .95rem;
+        }
+        .card-header-poli i { color: var(--poli-teal); }
+
+        /* ── Upload zone ── */
+        .upload-zone {
+            border: 2px dashed var(--poli-teal);
+            border-radius: 12px;
+            padding: 35px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: background .2s, border-color .2s;
+            background: var(--poli-light);
+        }
+        .upload-zone:hover { background: #c9eef6; border-color: var(--poli-navy); }
+        .upload-icon { font-size: 2.8rem; color: var(--poli-teal); }
+
+        /* ── Botones ── */
+        .btn-poli {
+            background: var(--poli-teal);
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+        }
+        .btn-poli:hover { background: #0091b3; color: #fff; }
+        .btn-outline-poli {
+            border: 2px solid var(--poli-navy);
+            color: var(--poli-navy);
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        .btn-outline-poli:hover { background: var(--poli-navy); color: #fff; }
+
+        /* ── Colecciones ── */
+        .collection-card {
+            border: 2px solid transparent;
+            transition: border-color .15s, transform .15s, box-shadow .15s;
+            cursor: pointer;
+            border-radius: 12px;
+        }
+        .collection-card:hover {
+            border-color: var(--poli-teal);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,163,199,.2);
+        }
+        .col-icon {
+            width: 44px; height: 44px;
+            background: var(--poli-light);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; color: var(--poli-teal);
+        }
+
+        /* ── Samples ── */
+        .sample-btn { border-radius: 8px; font-weight: 600; font-size: .82rem; }
+        .sample-xlsx { border-color: #1d6f42; color: #1d6f42; }
+        .sample-xlsx:hover { background: #1d6f42; color: #fff; }
+        .sample-xls  { border-color: #2f7a2f; color: #2f7a2f; }
+        .sample-xls:hover  { background: #2f7a2f; color: #fff; }
+        .sample-csv  { border-color: var(--poli-navy); color: var(--poli-navy); }
+        .sample-csv:hover  { background: var(--poli-navy); color: #fff; }
+
+        /* ── Preview nombre ── */
+        #namePreview { background: var(--poli-light); border-radius: 8px; padding: 8px 12px; }
+        #previewText { color: var(--poli-teal); font-weight: 800; }
+
+        /* ── Footer ── */
+        .footer-poli {
+            background: var(--poli-navy);
+            color: rgba(255,255,255,.6);
+            font-size: .78rem;
+            padding: 1.2rem 0;
+            margin-top: 3rem;
+        }
+        .footer-poli a { color: var(--poli-teal); text-decoration: none; }
+
+        /* ── Step pills ── */
+        .step-pill {
+            width: 26px; height: 26px; border-radius: 50%;
+            background: var(--poli-teal); color: #fff;
+            font-size: .75rem; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .form-control:focus {
+            border-color: var(--poli-teal);
+            box-shadow: 0 0 0 .2rem rgba(0,163,199,.2);
+        }
+        .form-select:focus {
+            border-color: var(--poli-teal);
+            box-shadow: 0 0 0 .2rem rgba(0,163,199,.2);
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────── -->
+<nav class="navbar navbar-poli px-4 py-2">
+    <div class="d-flex align-items-center gap-3">
+        <div class="logo-wrap">
+            <img src="/logo-poli.svg" alt="Politécnico Grancolombiano"/>
+        </div>
+        <div class="divider"></div>
+        <div>
+            <div class="app-title"><i class="bi bi-database-fill-gear me-1"></i>Firebase Excel Manager</div>
+            <div class="app-sub">Fundamentos de la Tecnología Cloud · U4</div>
+        </div>
+    </div>
+    <span class="teal-badge d-none d-md-inline">Módulo Cloud</span>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<div class="hero">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3 mb-2">
+            <span class="teal-badge">Actividad Sumativa</span>
+        </div>
+        <h1>Gestión de datos en la nube</h1>
+        <p class="mb-0">Carga archivos Excel o CSV y gestiona tu información directamente en <strong style="color:var(--poli-teal)">Firebase Firestore</strong> con CRUD completo.</p>
+    </div>
+</div>
+
+<!-- ── CONTENT ────────────────────────────────────── -->
+<div class="container py-4">
+
+    <!-- Alertas -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- ── Panel izquierdo ── -->
+        <div class="col-lg-5">
+
+            <!-- Upload -->
+            <div class="card mb-4">
+                <div class="card-header-poli">
+                    <i class="bi bi-cloud-upload-fill me-2"></i>Cargar archivo
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+                        <div class="upload-zone mb-3" onclick="document.getElementById('fileInput').click()">
+                            <div class="upload-icon"><i class="bi bi-file-earmark-spreadsheet-fill"></i></div>
+                            <p class="mt-2 mb-0 fw-bold text-dark">Haz clic o arrastra tu archivo aquí</p>
+                            <small class="text-muted">Soporta .xlsx, .xls y .csv</small>
+                            <div id="fileName" class="mt-2 fw-semibold" style="color:var(--poli-teal)"></div>
+                        </div>
+                        <input type="file" id="fileInput" name="file" accept=".csv,.xlsx,.xls" class="d-none"
+                               onchange="showFileName(this)"/>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Nombre de colección <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" id="collectionNameInput" name="collectionName"
+                                   class="form-control" required
+                                   placeholder="Ej: empleados, productos, clientes"
+                                   oninput="updatePreview(this.value)"/>
+                            <div class="form-text">Solo letras, números y guiones bajos.</div>
+                            <div id="namePreview" class="mt-2 d-none">
+                                <small class="text-muted"><i class="bi bi-firebase me-1"></i>Se guardará en Firebase como:</small><br/>
+                                <code id="previewText"></code>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-poli w-100 py-2">
+                            <i class="bi bi-upload me-2"></i>Subir a Firebase
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cómo funciona -->
+            <div class="card">
+                <div class="card-header-poli">
+                    <i class="bi bi-info-circle-fill me-2"></i>¿Cómo funciona?
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-pill">1</div>
+                            <div>
+                                <div class="fw-semibold text-dark">Carga tu archivo</div>
+                                <small class="text-muted">Excel (.xlsx, .xls) o CSV — cualquier estructura de columnas</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-pill">2</div>
+                            <div>
+                                <div class="fw-semibold text-dark">Define el nombre</div>
+                                <small class="text-muted">La primera fila define los campos. Se genera un ID único para la colección</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-pill">3</div>
+                            <div>
+                                <div class="fw-semibold text-dark">Firebase Firestore</div>
+                                <small class="text-muted">Se crea automáticamente la colección en la nube</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="step-pill">4</div>
+                            <div>
+                                <div class="fw-semibold text-dark">CRUD completo</div>
+                                <small class="text-muted">Crea, consulta, edita y elimina registros desde la interfaz</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="fw-bold text-dark mb-2" style="font-size:.85rem">
+                        <i class="bi bi-download me-1" style="color:var(--poli-teal)"></i>Archivos de prueba:
+                    </p>
+                    <div class="d-flex flex-column gap-2">
+                        <a href="/samples/usuarios_prueba.xlsx" download
+                           class="btn btn-outline-success sample-btn d-flex align-items-center gap-2">
+                            <i class="bi bi-file-earmark-excel-fill"></i>
+                            <span>usuarios_prueba.xlsx</span>
+                            <span class="badge bg-success ms-auto" style="font-size:.65rem">Excel moderno</span>
+                        </a>
+                        <a href="/samples/usuarios_prueba.xls" download
+                           class="btn sample-btn sample-xls d-flex align-items-center gap-2">
+                            <i class="bi bi-file-earmark-excel"></i>
+                            <span>usuarios_prueba.xls</span>
+                            <span class="badge ms-auto" style="background:#2f7a2f;font-size:.65rem">Excel clásico</span>
+                        </a>
+                        <a href="/samples/usuarios_prueba.csv" download
+                           class="btn sample-btn sample-csv d-flex align-items-center gap-2">
+                            <i class="bi bi-filetype-csv"></i>
+                            <span>usuarios_prueba.csv</span>
+                            <span class="badge ms-auto" style="background:var(--poli-navy);font-size:.65rem">CSV</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── Panel derecho: colecciones ── -->
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header-poli d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-collection-fill me-2"></i>Colecciones en Firebase</span>
+                    <span class="badge rounded-pill" style="background:var(--poli-teal)"
+                          th:text="${collections.size()} + ' colecciones'">0</span>
+                </div>
+                <div class="card-body p-4">
+
+                    <div th:if="${collections.isEmpty()}" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox" style="font-size:3rem;color:var(--poli-teal);opacity:.4"></i>
+                        <p class="mt-3 fw-semibold">Aún no hay colecciones</p>
+                        <p class="small">Carga un archivo para comenzar</p>
+                    </div>
+
+                    <div class="row g-3" th:if="${!collections.isEmpty()}">
+                        <div class="col-sm-6" th:each="col : ${collections}">
+                            <a th:href="@{'/collection/' + ${col}}" class="text-decoration-none">
+                                <div class="card collection-card p-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="col-icon">
+                                            <i class="bi bi-table"></i>
+                                        </div>
+                                        <div style="min-width:0">
+                                            <div class="fw-bold text-dark text-truncate" th:text="${col}">colección</div>
+                                            <small class="text-muted">Ver y gestionar datos</small>
+                                        </div>
+                                        <i class="bi bi-chevron-right ms-auto text-muted small"></i>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-transparent border-0 px-4 pb-4" th:if="${!collections.isEmpty()}">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Cada colección fue creada desde un archivo cargado. Haz clic para gestionar sus registros.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer class="footer-poli text-center">
+    <div class="container">
+        <img src="/logo-poli.svg" alt="Poli" style="height:28px;opacity:.7;filter:brightness(0) invert(1)" class="me-2"/>
+        <span>Politécnico Grancolombiano · Fundamentos de la Tecnología Cloud · 2026</span>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function showFileName(input) {
+        const label = document.getElementById('fileName');
+        label.textContent = input.files[0] ? '✓ ' + input.files[0].name : '';
+    }
+
+    function updatePreview(value) {
+        const preview = document.getElementById('namePreview');
+        const previewText = document.getElementById('previewText');
+        if (!value.trim()) { preview.classList.add('d-none'); return; }
+        const clean = value.trim().toLowerCase().replace(/[^a-z0-9_\-]/g, '_');
+        const now = new Date();
+        const fecha = now.toISOString().slice(0,10).replace(/-/g,'');
+        const hora  = now.toTimeString().slice(0,8).replace(/:/g,'');
+        const rand  = Math.random().toString(36).slice(2,6).toUpperCase();
+        previewText.textContent = `${clean}_${fecha}_${hora}_${rand}`;
+        preview.classList.remove('d-none');
+    }
+
+    const zone = document.querySelector('.upload-zone');
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.background = '#c9eef6'; });
+    zone.addEventListener('dragleave', () => zone.style.background = '');
+    zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.style.background = '';
+        const input = document.getElementById('fileInput');
+        input.files = e.dataTransfer.files;
+        showFileName(input);
+    });
+</script>
+</body>
+</html>

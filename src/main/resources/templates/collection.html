@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="'Colección: ' + ${collectionName} + ' — Poli'">Colección</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --poli-navy: #293357;
+            --poli-teal: #00A3C7;
+            --poli-light: #E8F7FB;
+            --poli-gray:  #F4F5F8;
+        }
+        * { font-family: 'Nunito', sans-serif; }
+        body { background: var(--poli-gray); }
+
+        .navbar-poli { background: var(--poli-navy); box-shadow: 0 2px 12px rgba(41,51,87,.35); }
+        .navbar-poli .logo-wrap img { height: 34px; }
+        .navbar-poli .divider { width:1px; height:28px; background:rgba(255,255,255,.3); }
+        .navbar-poli .app-title { color:#fff; font-weight:700; font-size:.95rem; }
+        .navbar-poli .col-name  { color: var(--poli-teal); font-weight:800; font-size:.95rem; }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--poli-navy) 0%, #1c2444 100%);
+            color: #fff;
+            padding: 1.4rem 0 1.2rem;
+        }
+        .page-header h2 { font-weight: 800; font-size: 1.3rem; margin:0; }
+        .teal-badge {
+            background: var(--poli-teal); color:#fff;
+            font-size:.7rem; font-weight:700;
+            padding: 2px 10px; border-radius:20px;
+            text-transform:uppercase; letter-spacing:.5px;
+        }
+
+        .card { border:none; border-radius:14px; box-shadow:0 2px 16px rgba(41,51,87,.09); }
+
+        /* Toolbar */
+        .toolbar { background:#fff; border-radius:12px; padding:.9rem 1.2rem; box-shadow:0 2px 8px rgba(41,51,87,.07); }
+        .btn-poli { background:var(--poli-teal); color:#fff; font-weight:700; border:none; border-radius:8px; }
+        .btn-poli:hover { background:#0091b3; color:#fff; }
+
+        /* Tabla */
+        .table-card { border-radius:14px; overflow:hidden; }
+        .table thead th {
+            background: var(--poli-navy);
+            color: #fff;
+            font-weight: 700;
+            font-size: .82rem;
+            white-space: nowrap;
+            border: none;
+            padding: .85rem 1rem;
+        }
+        .table thead th:first-child { border-radius:0; }
+        .table tbody tr:hover { background: var(--poli-light); }
+        .table td { vertical-align:middle; font-size:.88rem; border-color:#f0f0f0; padding:.7rem 1rem; max-width:180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .id-badge { font-family:monospace; font-size:.68rem; background:#eef0f5; padding:2px 7px; border-radius:5px; color:#666; }
+        .table-footer { background:#fff; border-top:1px solid #f0f0f0; padding:.7rem 1.2rem; font-size:.82rem; color:#888; border-radius:0 0 14px 14px; }
+
+        /* Botones acción */
+        .btn-edit   { background:#fff; border:2px solid var(--poli-teal); color:var(--poli-teal); border-radius:7px; padding:.25rem .55rem; font-size:.8rem; }
+        .btn-edit:hover   { background:var(--poli-teal); color:#fff; }
+        .btn-delete { background:#fff; border:2px solid #dc3545; color:#dc3545; border-radius:7px; padding:.25rem .55rem; font-size:.8rem; }
+        .btn-delete:hover { background:#dc3545; color:#fff; }
+
+        /* Búsqueda */
+        .search-bar .form-control:focus,
+        .search-bar .form-select:focus {
+            border-color: var(--poli-teal);
+            box-shadow: 0 0 0 .2rem rgba(0,163,199,.15);
+        }
+        .btn-search { background:var(--poli-navy); color:#fff; border:none; border-radius:8px; }
+        .btn-search:hover { background:#1c2444; color:#fff; }
+
+        .footer-poli { background:var(--poli-navy); color:rgba(255,255,255,.5); font-size:.76rem; padding:1rem 0; margin-top:2.5rem; }
+    </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ── -->
+<nav class="navbar navbar-poli px-4 py-2">
+    <div class="d-flex align-items-center gap-3">
+        <div class="logo-wrap">
+            <a href="/"><img src="/logo-poli.svg" alt="Poli"/></a>
+        </div>
+        <div class="divider"></div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="/" class="text-decoration-none app-title">
+                <i class="bi bi-arrow-left me-1"></i>Firebase Excel Manager
+            </a>
+            <span style="color:rgba(255,255,255,.4)">/</span>
+            <span class="col-name" th:text="${collectionName}">colección</span>
+        </div>
+    </div>
+    <span class="teal-badge d-none d-md-inline">Firestore CRUD</span>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<div class="page-header">
+    <div class="container-fluid px-4">
+        <div class="d-flex align-items-center gap-3">
+            <div style="background:var(--poli-teal);border-radius:10px;width:42px;height:42px;display:flex;align-items:center;justify-content:center">
+                <i class="bi bi-table text-white fs-5"></i>
+            </div>
+            <div>
+                <h2 th:text="${collectionName}">colección</h2>
+                <small style="color:rgba(255,255,255,.6)">Colección en Firebase Firestore</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── CONTENT ── -->
+<div class="container-fluid py-4 px-4">
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show border-0 shadow-sm">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show border-0 shadow-sm">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar d-flex flex-wrap gap-2 align-items-center mb-3">
+        <a th:href="@{'/collection/' + ${collectionName} + '/new'}" class="btn btn-poli">
+            <i class="bi bi-plus-lg me-1"></i>Nuevo registro
+        </a>
+
+        <!-- Búsqueda -->
+        <form th:action="@{'/collection/' + ${collectionName}}" method="get"
+              class="d-flex gap-2 ms-auto flex-wrap search-bar align-items-center">
+            <select name="searchField" class="form-select form-select-sm" style="width:auto;border-radius:8px">
+                <option value="">— Campo —</option>
+                <option th:each="f : ${fields}" th:value="${f}" th:text="${f}"
+                        th:selected="${f == searchField}"></option>
+            </select>
+            <input type="text" name="searchValue" class="form-control form-control-sm"
+                   placeholder="Buscar valor..." th:value="${searchValue}"
+                   style="width:170px;border-radius:8px"/>
+            <button type="submit" class="btn btn-search btn-sm px-3">
+                <i class="bi bi-search"></i>
+            </button>
+            <a th:href="@{'/collection/' + ${collectionName}}"
+               class="btn btn-sm btn-outline-secondary" style="border-radius:8px">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </form>
+
+        <!-- Eliminar colección -->
+        <form th:action="@{'/collection/' + ${collectionName} + '/delete-all'}" method="post"
+              th:data-name="${collectionName}"
+              onsubmit="return confirm('¿Eliminar TODA la colección «' + this.dataset.name + '»?\nEsta acción no se puede deshacer.')">
+            <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius:8px;font-weight:600">
+                <i class="bi bi-trash3 me-1"></i>Eliminar colección
+            </button>
+        </form>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card table-card">
+        <div th:if="${documents.isEmpty()}" class="text-center py-5 text-muted">
+            <i class="bi bi-inbox" style="font-size:3rem;color:var(--poli-teal);opacity:.4"></i>
+            <p class="mt-3 fw-semibold">No hay registros en esta colección</p>
+            <a th:href="@{'/collection/' + ${collectionName} + '/new'}" class="btn btn-poli btn-sm">
+                <i class="bi bi-plus me-1"></i>Agregar primero
+            </a>
+        </div>
+
+        <div class="table-responsive" th:if="${!documents.isEmpty()}">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th style="width:40px">#</th>
+                        <th>ID Documento</th>
+                        <th th:each="f : ${fields}" th:text="${f}">campo</th>
+                        <th class="text-center" style="width:100px">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="doc, stat : ${documents}">
+                        <td class="text-muted fw-semibold" th:text="${stat.index + 1}">1</td>
+                        <td><span class="id-badge" th:text="${doc['_id']}">id</span></td>
+                        <td th:each="f : ${fields}" th:text="${doc.get(f)}">valor</td>
+                        <td class="text-center">
+                            <a th:href="@{'/collection/' + ${collectionName} + '/edit/' + ${doc['_id']}}"
+                               class="btn btn-edit me-1" title="Editar">
+                                <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form th:action="@{'/collection/' + ${collectionName} + '/delete/' + ${doc['_id']}}"
+                                  method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar este registro?')">
+                                <button type="submit" class="btn btn-delete" title="Eliminar">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-footer d-flex align-items-center gap-2" th:if="${!documents.isEmpty()}">
+            <i class="bi bi-database" style="color:var(--poli-teal)"></i>
+            <span><strong th:text="${documents.size()}">0</strong> registros</span>
+            <span th:if="${searchValue != null and !searchValue.isEmpty()}" class="ms-1">
+                — filtrando <strong th:text="${searchField}"></strong> = <em th:text="${searchValue}"></em>
+            </span>
+            <span class="ms-auto text-muted">Firebase Firestore · <span th:text="${collectionName}"></span></span>
+        </div>
+    </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="footer-poli text-center">
+    <div class="container">
+        <img src="/logo-poli.svg" alt="Poli"
+             style="height:22px;opacity:.6;filter:brightness(0) invert(1)" class="me-2"/>
+        Politécnico Grancolombiano · Fundamentos de la Tecnología Cloud · 2026
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
