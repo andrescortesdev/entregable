@@ -3,7 +3,7 @@ name: Build → GHCR → Deploy VPS
 on:
   push:
     branches: [main]
-  workflow_dispatch:        # permite lanzar manualmente desde GitHub
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -17,9 +17,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-
-    outputs:
-      image_tag: ${{ steps.meta.outputs.version }}
 
     steps:
       - name: Checkout código
@@ -70,26 +67,20 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT || 22 }}
           script: |
-            # Login en GHCR desde el VPS
             echo "${{ secrets.GITHUB_TOKEN }}" | \
               docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Bajar imagen nueva
             docker pull ghcr.io/${{ env.IMAGE_NAME }}:latest
 
-            # Parar y eliminar contenedor anterior si existe
             docker stop firebase-excel-manager 2>/dev/null || true
             docker rm   firebase-excel-manager 2>/dev/null || true
 
-            # Levantar contenedor nuevo
             docker run -d \
               --name firebase-excel-manager \
               --restart unless-stopped \
               -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=prod \
+              -e FIREBASE_CREDENTIALS_BASE64="${{ secrets.FIREBASE_CREDENTIALS_BASE64 }}" \
               ghcr.io/${{ env.IMAGE_NAME }}:latest
 
-            # Limpiar imágenes viejas (libera disco)
             docker image prune -f
-
             echo "✅ Deploy completado: $(date)"
